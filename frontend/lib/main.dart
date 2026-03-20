@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'ui/meme_page.dart'; 
+import 'ui/pages/meme_page.dart'; 
 
 void main() {
   runApp(const MyApp());
@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         useMaterial3: true,
       ),
-      home: const MemeGeneratorPage(),
+      home: const MemePage(),
     );
   }
 }

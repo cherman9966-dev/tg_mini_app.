@@ -2,9 +2,10 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const { createCanvas, loadImage } = require('canvas');
-const { templates, defaults } = require('./config'); // Імпортуємо наш конфіг
+const { templates, defaults } = require('./config'); 
 const app = express();
 app.use(cors());
+app.use('/assets', express.static('assets'));
 
 console.log('--- DEBUG INFO ---');
 console.log('Templates:', templates);
