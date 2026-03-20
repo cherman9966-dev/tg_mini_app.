@@ -9,6 +9,7 @@ class MemeCanvas extends StatelessWidget {
   final bool isFlipped;
   final Function(String) onSelectText;
   final VoidCallback onTextUpdated;
+  final Function(String) onDeleteItem; // <-- 1. НОВИЙ КОЛБЕК ДЛЯ ВИДАЛЕННЯ
 
   const MemeCanvas({
     super.key,
@@ -18,17 +19,17 @@ class MemeCanvas extends StatelessWidget {
     required this.isFlipped,
     required this.onSelectText,
     required this.onTextUpdated,
+    required this.onDeleteItem, // <-- Вимагаємо його в конструкторі
   });
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(16.0), // Додаємо красиві відступи від країв екрана
+      padding: const EdgeInsets.all(16.0),
       child: AspectRatio(
-        aspectRatio: 1.0, // Пропорція 1:1 (Квадрат). Якщо шаблони прямокутні, можна змінити на 4/3 або 16/9
+        aspectRatio: 1.0,
         child: LayoutBuilder(
           builder: (context, constraints) {
-            // Дізнаємося реальну ширину і висоту, яку нам виділив Flutter на цьому екрані
             final canvasWidth = constraints.maxWidth;
             final canvasHeight = constraints.maxHeight;
 
@@ -42,27 +43,28 @@ class MemeCanvas extends StatelessWidget {
               child: Stack(
                 clipBehavior: Clip.none,
                 children: [
-                  // 1. АДАПТИВНИЙ ФОН
+                  // Фон
                   Transform(
                     alignment: Alignment.center,
                     transform: isFlipped ? Matrix4.rotationY(pi) : Matrix4.identity(),
                     child: Image.network(
-                      imageUrl, 
-                      width: canvasWidth, 
-                      height: canvasHeight, 
+                      imageUrl,
+                      width: canvasWidth,
+                      height: canvasHeight,
                       fit: BoxFit.cover,
                     ),
                   ),
                   
-                  // 2. ТЕКСТИ З ДИНАМІЧНИМИ КОРДОНАМИ
+                  // Тексти
                   ...textItems.map((item) {
                     return DraggableTextWidget(
                       item: item,
                       isSelected: item.id == selectedItemId,
-                      canvasWidth: canvasWidth,   // <-- Передаємо реальну ширину для захисту
-                      canvasHeight: canvasHeight, // <-- Передаємо реальну висоту для захисту
+                      canvasWidth: canvasWidth,
+                      canvasHeight: canvasHeight,
                       onSelect: () => onSelectText(item.id),
                       onUpdate: onTextUpdated,
+                      onDelete: () => onDeleteItem(item.id), // <-- Передаємо ID на видалення
                     );
                   }),
                 ],
@@ -78,10 +80,11 @@ class MemeCanvas extends StatelessWidget {
 class DraggableTextWidget extends StatefulWidget {
   final MemeTextItem item;
   final bool isSelected;
-  final double canvasWidth;  // Отримуємо ширину полотна
-  final double canvasHeight; // Отримуємо висоту полотна
+  final double canvasWidth;
+  final double canvasHeight;
   final VoidCallback onSelect;
   final VoidCallback onUpdate;
+  final VoidCallback onDelete; // <-- Приймаємо функцію видалення
 
   const DraggableTextWidget({
     super.key, 
@@ -91,6 +94,7 @@ class DraggableTextWidget extends StatefulWidget {
     required this.canvasHeight,
     required this.onSelect, 
     required this.onUpdate,
+    required this.onDelete, // <-- Приймаємо в конструкторі
   });
 
   @override
@@ -116,12 +120,9 @@ class _DraggableTextWidgetState extends State<DraggableTextWidget> {
         },
         onScaleUpdate: (details) {
           setState(() {
-            // Рахуємо нові координати
             double newX = widget.item.position.dx + details.focalPointDelta.dx;
             double newY = widget.item.position.dy + details.focalPointDelta.dy;
 
-            // ДИНАМІЧНИЙ ЗАХИСТ ВІД ВИЛЬОТУ ЗА ЕКРАН
-            // Замість жорстких 250.0 ми віднімаємо ~50 пікселів від реальної ширини
             newX = newX.clamp(0.0, widget.canvasWidth - 50.0);
             newY = newY.clamp(0.0, widget.canvasHeight - 50.0);
 
@@ -131,6 +132,7 @@ class _DraggableTextWidgetState extends State<DraggableTextWidget> {
           });
           widget.onUpdate();
         },
+       
         child: Transform.scale(
           scale: widget.item.scale,
           child: Transform.rotate(

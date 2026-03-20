@@ -4,8 +4,10 @@ import 'package:frontend/models/meme_tempale.dart';
 import 'package:frontend/ui/widgets/meme_canvas.dart';
 import 'package:frontend/ui/widgets/meme_toolbar.dart';
 
+
 class EditMemePage extends StatefulWidget {
   final MemeTemplate template;
+
   const EditMemePage({super.key, required this.template});
 
   @override
@@ -14,10 +16,12 @@ class EditMemePage extends StatefulWidget {
 
 class _EditMemePageState extends State<EditMemePage> {
   final TextEditingController _textController = TextEditingController();
-  final List<MemeTextItem> _items = [];
-  String? _selectedItemId;
   
-  bool _isFlipped = false; // Глобальний стан фону
+  // Додали final згідно з підказкою від Flutter, яку ти показував на скріншоті!
+  final List<MemeTextItem> _items = [];
+  
+  String? _selectedItemId;
+  bool _isFlipped = false;
 
   @override
   void initState() {
@@ -59,7 +63,6 @@ class _EditMemePageState extends State<EditMemePage> {
 
   @override
   Widget build(BuildContext context) {
-    // Шукаємо вибраний об'єкт, щоб знати його стан CAPS
     MemeTextItem? selectedItem;
     if (_selectedItemId != null) {
       selectedItem = _items.firstWhere((i) => i.id == _selectedItemId);
@@ -72,6 +75,7 @@ class _EditMemePageState extends State<EditMemePage> {
         foregroundColor: Colors.white,
         title: const Text('Редактор мему'),
         actions: [
+          // Поки що це просто кнопки-заглушки, функцію збереження додамо пізніше
           IconButton(icon: const Icon(Icons.share), onPressed: () {}),
           IconButton(icon: const Icon(Icons.save), onPressed: () {}),
         ],
@@ -93,7 +97,7 @@ class _EditMemePageState extends State<EditMemePage> {
                   selectedItemId: _selectedItemId,
                   isFlipped: _isFlipped,
                   onSelectText: _selectItem,
-                  onTextUpdated: () => setState(() {}),
+                  onTextUpdated: () => setState(() {}), onDeleteItem: (String p1) {  },
                 ),
               ),
             ),
@@ -104,16 +108,26 @@ class _EditMemePageState extends State<EditMemePage> {
               isSelectedTextUppercase: selectedItem?.isUppercase ?? false,
               isFlipped: _isFlipped,
               onAddText: () => _addNewText(),
-              onAddEmoji: () => _addNewText(text: '😎'), // Емодзі - це просто текст!
+              onAddEmoji: () => _addNewText(text: '😎'),
               onToggleFlip: () => setState(() => _isFlipped = !_isFlipped),
               onToggleCaps: () {
                 if (selectedItem != null) {
-                  setState(() => selectedItem!.isUppercase = !selectedItem.isUppercase);
+                  setState(() => selectedItem!.isUppercase = !selectedItem!.isUppercase);
                 }
               },
               onChangeColor: (color) {
                 if (selectedItem != null) {
                   setState(() => selectedItem!.color = color);
+                }
+              },
+              // ОСЬ ВОНА: Наша нова логіка видалення
+              onDeleteText: () {
+                if (_selectedItemId != null) {
+                  setState(() {
+                    _items.removeWhere((item) => item.id == _selectedItemId);
+                    _selectedItemId = null; // Знімаємо виділення
+                    _textController.clear(); // Очищаємо поле вводу
+                  });
                 }
               },
             ),
