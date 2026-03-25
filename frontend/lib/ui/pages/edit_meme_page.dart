@@ -4,7 +4,6 @@ import 'package:frontend/models/meme_tempale.dart';
 import 'package:frontend/ui/widgets/meme_canvas.dart';
 import 'package:frontend/ui/widgets/meme_toolbar.dart';
 
-
 class EditMemePage extends StatefulWidget {
   final MemeTemplate template;
 
@@ -16,10 +15,9 @@ class EditMemePage extends StatefulWidget {
 
 class _EditMemePageState extends State<EditMemePage> {
   final TextEditingController _textController = TextEditingController();
-  
-  // Додали final згідно з підказкою від Flutter, яку ти показував на скріншоті!
+
   final List<MemeTextItem> _items = [];
-  
+
   String? _selectedItemId;
   bool _isFlipped = false;
 
@@ -44,10 +42,7 @@ class _EditMemePageState extends State<EditMemePage> {
 
   void _addNewText({String text = 'Новий текст'}) {
     setState(() {
-      final newItem = MemeTextItem(
-        id: DateTime.now().toString(),
-        text: text,
-      );
+      final newItem = MemeTextItem(id: DateTime.now().toString(), text: text);
       _items.add(newItem);
       _selectItem(newItem.id);
     });
@@ -75,9 +70,14 @@ class _EditMemePageState extends State<EditMemePage> {
         foregroundColor: Colors.white,
         title: const Text('Редактор мему'),
         actions: [
-          // Поки що це просто кнопки-заглушки, функцію збереження додамо пізніше
-          IconButton(icon: const Icon(Icons.share), onPressed: () {}),
-          IconButton(icon: const Icon(Icons.save), onPressed: () {}),
+          IconButton(
+            icon: const Icon(Icons.save),
+            onPressed: () {
+              // Тут можна реалізувати логіку збереження мему
+              // Наприклад, згенерувати зображення та повернути URL назад на попередній екран
+              Navigator.pop(context, 'https://example.com/generated_meme.jpg');
+            },
+          ),
         ],
       ),
       body: GestureDetector(
@@ -97,11 +97,12 @@ class _EditMemePageState extends State<EditMemePage> {
                   selectedItemId: _selectedItemId,
                   isFlipped: _isFlipped,
                   onSelectText: _selectItem,
-                  onTextUpdated: () => setState(() {}), onDeleteItem: (String p1) {  },
+                  onTextUpdated: () => setState(() {}),
+                  onDeleteItem: (String p1) {},
                 ),
               ),
             ),
-            
+
             MemeToolbar(
               textController: _textController,
               hasSelectedText: _selectedItemId != null,
@@ -112,7 +113,10 @@ class _EditMemePageState extends State<EditMemePage> {
               onToggleFlip: () => setState(() => _isFlipped = !_isFlipped),
               onToggleCaps: () {
                 if (selectedItem != null) {
-                  setState(() => selectedItem!.isUppercase = !selectedItem!.isUppercase);
+                  setState(
+                    () =>
+                        selectedItem!.isUppercase = !selectedItem!.isUppercase,
+                  );
                 }
               },
               onChangeColor: (color) {
@@ -120,13 +124,13 @@ class _EditMemePageState extends State<EditMemePage> {
                   setState(() => selectedItem!.color = color);
                 }
               },
-              // ОСЬ ВОНА: Наша нова логіка видалення
+
               onDeleteText: () {
                 if (_selectedItemId != null) {
                   setState(() {
                     _items.removeWhere((item) => item.id == _selectedItemId);
-                    _selectedItemId = null; // Знімаємо виділення
-                    _textController.clear(); // Очищаємо поле вводу
+                    _selectedItemId = null;
+                    _textController.clear();
                   });
                 }
               },

@@ -1,31 +1,29 @@
-# tg_mini_app.
-TG Meme Pro 🚀 High-performance Telegram Mini App for instant meme generation.  Built with Flutter (Web) &amp; Node.js (Canvas API). ✅ Clean Architecture: Service-oriented &amp; scalable. ⚡ Live Preview: Real-time generation with Debounce. 🖼 Template System: Fast &amp; consistent rendering. 📱 TMA Ready: Optimized for Telegram.
+TG Meme Pro is a fast, high-performance Telegram Mini App for instant meme generation. The frontend is built with Flutter (Web), and the backend is powered by Node.js.
 
 ✨ Key Features
-🎨 Interactive Canvas (Drag & Drop): Users can freely move, scale, and rotate text and emojis using multi-touch gestures (GestureDetector with onScaleUpdate).
+Interactive Canvas: Users can easily drag, scale, and rotate text or emojis using multi-touch gestures (implemented via GestureDetector).
 
-🛡️ Smart Boundaries: Implemented mathematical constraints (clamp) combined with LayoutBuilder to ensure draggable elements never escape the visible canvas area, providing a flawless UX on any screen size.
+Smart Boundaries: Draggable elements never escape the visible screen. This is achieved using mathematical constraints (clamp) combined with a LayoutBuilder to read screen dimensions.
 
-📝 Advanced Typography: Authentic meme styling with custom rendering (simulated text stroke using Stack and Paint) and independent state management for each text node (Color, CAPS lock, Rotation).
+Custom Meme Typography: Authentic meme text styling with an outline effect (created using Stack and Paint). Each text node has an independent state: its own color, rotation, and size.
 
-🎛️ Context-Aware Toolbar: A dynamic UI (MemeToolbar) that adapts to user actions. Editing tools (Color Palette, Delete, CAPS) smoothly appear only when a specific text element is selected.
+Dynamic Toolbar: Editing tools (color palette, delete, etc.) smoothly appear only when a specific text element is selected.
 
-🔄 Background Manipulation: Instant horizontal image flipping using matrix transformations (Matrix4.rotationY).
+Background Manipulation: Instant horizontal image flipping using matrix transformations (Matrix4).
 
 🏗️ Architecture & Clean Code
-This project strictly follows Clean Architecture principles and Widget Composition to ensure high maintainability and scalability:
+The project follows Clean Architecture principles to ensure high maintainability and scalability:
 
-Separation of Concerns: The complex UI is broken down into independent, highly cohesive widgets (MemeCanvas for rendering/gestures and MemeToolbar for user inputs).
+Separation of Concerns: The complex UI is broken down into small, independent widgets (e.g., MemeCanvas for gestures and MemeToolbar for inputs).
 
-State Isolation: Local state (like text coordinates) is encapsulated within specific widget nodes, preventing unnecessary rebuilds of the entire screen and ensuring smooth 60 FPS animations.
+State Isolation: Local state (like text coordinates) is encapsulated within specific widgets. This prevents unnecessary rebuilds of the entire screen and ensures smooth 60 FPS animations.
 
-Data Models: Utilizing dedicated data classes (MemeTextItem) to manage the state of multiple independent objects on the canvas.
+Data Models: All data regarding a specific text node is managed using a dedicated data class (MemeTextItem).
 
-📱 Responsive Design
-The application utilizes AspectRatio and adaptive constraints to perfectly fit any device screen, maintaining a 1:1 canvas ratio while dynamically calculating touch boundaries.
+Responsive Design: The UI perfectly adapts to any mobile device using AspectRatio (maintaining a 1:1 canvas ratio) and dynamic constraints.
 
 🚀 Upcoming Features (Roadmap)
-Client-Side Rendering: Implementing RepaintBoundary to capture the composed widget tree and export it as a high-quality Uint8List PNG image.
+Client-Side Export: Implementing RepaintBoundary to capture the composed widget tree and save it as a high-quality PNG image.
 
 Telegram Share API: One-tap sharing of the generated meme directly to Telegram chats and stories.
 

@@ -14,10 +14,8 @@ class _MemePageState extends State<MemePage> {
   // Список для зберігання готових мемів (поки що зберігаємо просто URL-адреси)
   final List<String> _savedMemesUrls = [];
 
-  // Отримуємо список шаблонів із нашого сервісу
   final List<MemeTemplate> _templates = TemplateService.getAvailableTemplates();
 
-  // Асинхронний метод для переходу на екран редагування
   Future<void> _openEditor(MemeTemplate template) async {
     
     final String? generatedMemeUrl = await Navigator.push(
@@ -33,7 +31,7 @@ class _MemePageState extends State<MemePage> {
       });
     }
 
-    // Тимчасова перевірка, щоб ти бачив, що кнопка працює
+    
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('Ви обрали шаблон: ${template.name}')),
